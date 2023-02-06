@@ -1,3 +1,4 @@
+import { Html } from "next/document";
 import Head from "next/head";
 import { useState } from "react";
 import styles from "./index.module.css";
@@ -7,6 +8,26 @@ export default function Home() {
 	const [result, setResult] = useState();
 	const [history, setHistory] = useState("");
 	const [question, setQuestion] = useState("");
+
+	async function onLoad(event) {
+		console.log('test')
+		const div = window.document.getElementById('butt')
+		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+		const recognition = new SpeechRecognition();
+		recognition.continuous = false;
+		recognition.interimResults = false;
+		recognition.maxAlternatives = 1;
+
+		div.addEventListener('click',  () => {
+			console.log('ok')
+			recognition.start();
+		})
+				
+		recognition.onresult = async (event) => {
+			console.log(event.results[0][0].transcript);
+			setInquiryInput(event.results[0][0].transcript);
+		}
+	}
 
 	async function onSubmit(event) {
 		event.preventDefault();
@@ -83,15 +104,15 @@ export default function Home() {
 	}
 
 	return (
-		<div>
+		<div onLoad={onLoad}>
 			<Head>
 				<title>OpenAI Quickstart</title>
 			</Head>
 
 			<main className={styles.main}>
-				<button>Voice</button>
+				<button id="butt" >Voice</button>
 				<form onSubmit={onSubmit}>
-					<input
+					<input onFocus={onLoad}
 						type="text"
 						name="inquiry"
 						placeholder="Enter what you want to ask"
@@ -100,7 +121,7 @@ export default function Home() {
 							setInquiryInput(e.target.value);
 						}}
 					/>
-					<input id="submit_button" type="submit" value="Submit" />
+					<input type="submit" value="Submit" />
 				</form>
 				
 				<div className={styles.result}>{history}</div>
