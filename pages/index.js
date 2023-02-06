@@ -1,4 +1,3 @@
-import { Html } from "next/document";
 import Head from "next/head";
 import { useState } from "react";
 import styles from "./index.module.css";
